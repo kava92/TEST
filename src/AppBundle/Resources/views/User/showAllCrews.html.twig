@@ -1,0 +1,45 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}Admin panel{% endblock %}
+
+{% block top %}
+    <div class="col-md-2">
+        <img src="{{asset('img/admin.png')}}" alt="Photo" width="200" height="200" class="left-block"/>
+    </div>
+    <div class="col-md-8">
+        <br><br><br><br><br><br>
+        <div class="user-info">
+            <p>Admin panel</p>           
+            <div class="btn-group">     
+                <a class="btn btn-custom" href="/index">User page</a>
+                <a class="btn btn-custom" href="/admin/index">Main</a>
+                <a class="btn btn-custom" href="/admin/crews">All active groups</a>
+                <a class="btn btn-custom" href="/admin/events">All active events</a>
+                <a class="btn btn-custom" href="/admin/users">All users</a>
+            </div>
+        </div>     
+    </div>
+    
+{% endblock %}
+
+
+{% block middle %}
+    <h1>All groups:</h1>
+    <table class="table table-hover">
+        <th class='text-center'>Name</th>
+        <th class='text-center'>Description</th>
+        <th class='text-center'>Accepted</th>
+        <th class="text-center">Delete</th>
+
+
+        {% for crew in crews %}
+            <tr>
+                <td><a class="link" href="/crew/{{crew.id}}">{{crew.name}}</a></td>
+                <td>{{crew.description}}</td>
+                <td>{{crew.accepted}}</td>
+                <td><a href="/admin/crew/remove/{{crew.id}}"><span class="glyphicon glyphicon-remove remove"></span></a></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
+
