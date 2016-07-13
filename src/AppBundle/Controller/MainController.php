@@ -58,7 +58,7 @@ class MainController extends Controller {
 
         $crews = $user->getCrews();
         $events = $user->getEvents();
-        
+        $napis ="haahahahahhshahdaksdf badkjfa ekjfn aekfjkwf kjea";
 
         return ['events' => $events,
             'user' => $user,
