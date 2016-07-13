@@ -1,0 +1,72 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}Let's do it{% endblock %}
+{% block top %} 
+    <div class="col-md-2">
+    {%if user.photo is not null%}
+        <img src="{{user.photo.path}}" alt="Photo" width="200" height="200" class="left-block"/>
+    {% endif %}
+    </div>
+    <div class="col-md-8">
+        <br><br><br><br><br><br>
+        <div class="user-info">
+            {{user.username|upper}}
+            <br>
+            <div class="btn-group">
+                {%if user.photo is not null%}
+                    <a class="btn btn-custom" href="/photo/{{user.photo.id}}/edit">Update photo</a>
+                {% else %}    
+                    <a class="btn btn-custom" href="/photo/user/create/{{user.id}}">Add photo</a>
+                {% endif %}
+                <a class="btn btn-custom" href="/crew/new">Add group</a>
+                <a class="btn btn-custom" href="/profile/edit">Update profile</a>
+                <a class="btn btn-custom" href="/message">Messages</a>
+                {% if user.username == 'Admin' %}
+                    <a class="btn btn-custom" href="/admin/index">Admin panel</a>
+                {% endif %}  
+            </div>
+        </div>
+        
+    </div>
+{% endblock %}
+
+{% block middle %}
+
+   {# <div id="map"></div>
+    <script>
+        function initMap() {
+            var mapDiv = document.getElementById('map');
+            var map = new google.maps.Map(mapDiv, {
+                center: {lat: {{ user.latitude }}, lng: {{ user.longitude}}},
+                zoom: 8
+            });
+        
+        }
+    </script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXhtL_yLZra6mzoFA7P3thVJyAw7w4vmg&callback=initMap">
+    </script>#}
+
+    <h3 class="text-center">My groups</h3>
+    <div class="list-group">
+    {%for crew in crews%}
+        <a class="list-group-item" href="/crew/{{crew.id}}">{{crew.name}}</a>
+    {% else %}  
+        <p>No crews yet</p>     
+    {%endfor%}
+    </div>
+{% endblock %}
+{% block middle1 %} 
+    <h3 class="text-center">My events</h3>
+    <div class="list-group">
+    {%for event in events%}
+        <a class="list-group-item" href="/event/{{event.id}}">
+            {{event.name}}
+            {{event.date | date('Y-m-d H:i')}}
+        </a>
+    {% else %}  
+        <p>No events yet</p>     
+    {%endfor%}
+{% endblock %} 
+            
+        

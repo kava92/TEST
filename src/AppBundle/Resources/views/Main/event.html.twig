@@ -1,0 +1,96 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}{{event.name}}{% endblock %}
+
+{% block top %} 
+    <div class="col-md-2">
+    {%if event.photo is not null%}
+        <img src="{{event.photo.path}}" alt="Photo" width="200" height="200" class="left-block"/>
+    {% endif %}
+    </div>
+    <div class="col-md-8">
+        <br><br><br><br><br><br>
+        <div class="user-info">
+            {{event.name|upper}}
+            <br>
+            <span class="small">{{event.date | date('Y-m-d H:i')}}</span>
+            <br>           
+            <div class="btn-group">     
+                <a class="btn btn-custom" href="/crew/{{event.crew.id}}">Return to group site</a>  
+                {% if loggedUser in event.users %}
+                    {%if event.photo is not null%}
+                        <a class="btn btn-custom" href="/photo/{{event.photo.id}}/edit">Update photo</a>
+                    {% else %} 
+                        <a class="btn btn-custom" href="/photo/event/create/{{event.id}}">Add photo</a>
+                    {% endif %}
+                {% endif %}
+                
+                {% if loggedUser.id == event.eventAdmin.id %}
+                    <a class="btn btn-custom" href="/event/{{event.id}}/edit">Edit event info</a>
+                {% endif %}  
+            </div>
+        </div>
+        
+    </div>
+{% endblock %} 
+
+{% block middle %}
+    <p class="well">
+        {{event.description}}
+        <br>
+        <strong>Event admin: <a class="link" href="/user/{{event.eventAdmin.id}}">{{event.eventAdmin.username}}</a></strong>
+    </p>
+    {% if loggedUser not in event.users %}
+        <a class="btn btn-custom btn-lg" href="{{ path('app_event_addusertoevent', { 'id': event.id }) }}">JOIN</a>
+    {% else %}
+        <a class="btn btn-custom btn-lg" href="/event/removeUser/{{event.id}}">Leave</a>
+    {% endif %}
+    <div id="map" class="center-block"></div>
+    <script>
+         function initMap() {
+            var mapDiv = document.getElementById('map');
+            var myLatLng = {lat: {{ event.latitude }}, lng: {{ event.longitude}}};
+
+            var map = new google.maps.Map(mapDiv, {
+                center: myLatLng,
+                zoom: 16
+            });
+            var marker = new google.maps.Marker({
+                position: myLatLng,
+                map: map,
+                title: "{{ event.name }}\n{{ event.street }} {{ event.streetNumber }}\n{{ event.postcode }} {{ event.city }}"
+            });
+        }
+    </script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXhtL_yLZra6mzoFA7P3thVJyAw7w4vmg&callback=initMap">
+    </script>
+    <h4>{{event.city}}, ul. {{event.street}} {{event.streetNumber}}/{% if event.flatNumber is not null %}{{event.flatNumber}}{% endif %}</h4>
+    
+    <h3>Who joined</h3>
+    <div class="list-group">
+    {%for user in users%}
+        <strong><a class="list-group-item" href="/user/{{user.id}}">{{user.username}}</a></strong>
+    {% else %}  
+        <p>Noone is comming for now</p>  
+    {%endfor%}
+    </div>
+    
+    {% if loggedUser in event.users %}
+        <h3>Leave a comment</h3>
+        <p>{{form(comment_form)}}</p>
+    {% else %}
+       <h3>Comments</h3> 
+    {% endif %}
+    <ul class="list-group">
+        {% for comment in event.comments %}
+            <li class="list-group-item">
+                <p class="list-group-item-heading">{{comment.text}}<p> 
+                <p class="list-group-item-text"><strong> {{comment.user.username}}</strong> <span class="small">{{comment.date|date('Y-m-d H:i:s')}}</span></p>
+            </li>    
+        {% else %}  
+            <p>No comments</p>        
+        {% endfor %}
+    </ul>
+{% endblock %}
+
